@@ -1,0 +1,112 @@
+.TH UPNPC "1" "January 2018" "miniupnpc" "User Commands"
+
+.SH NAME
+upnpc \- miniupnpc library test client.
+
+
+.SH SYNOPSIS
+Add port redirection:
+.br
+\fBupnpc\fR [\fIoptions\fR] \fB\-a\fR ip port external_port protocol [duration]
+
+Delete port redirection:
+.br
+\fBupnpc\fR [\fIoptions\fR] \fB\-d\fR external_port protocol <remote host>
+
+Get Connection status:
+.br
+\fBupnpc\fR [\fIoptions\fR] \fB\-s\fR
+
+List redirections:
+.br
+\fBupnpc\fR [\fIoptions\fR] \fB\-l\fR
+
+List redirections (using GetListOfPortMappings (for IGD:2 only):
+.br
+\fBupnpc\fR [\fIoptions\fR] \fB\-L\fR
+
+Add (any) port redirection allowing IGD to use alternative external_port (for IGD:2 only):
+.br
+\fBupnpc\fR [\fIoptions\fR] \fB\-n\fR ip port external_port protocol [duration]
+
+Delete range of port redirections (for IGD:2 only):
+.br
+\fBupnpc\fR [\fIoptions\fR] \fB\-N\fR external_port_start external_port_end protocol [manage]
+
+Add all redirections to the current host:
+.br
+\fBupnpc\fR [\fIoptions\fR] \fB\-r\fR port1 [external_port1] protocol1 [port2 [external_port2] protocol2] [...]
+
+Add Pinhole (for IGD:2 only):
+.br
+\fBupnpc\fR [\fIoptions\fR] \fB\-A\fR remote_ip remote_port internal_ip internal_port protocol lease_time
+
+Update Pinhole (for IGD:2 only):
+.br
+\fBupnpc\fR [\fIoptions\fR] \fB\-U\fR uniqueID new_lease_time
+
+Check if Pinhole is Working (for IGD:2 only):
+.br
+\fBupnpc\fR [\fIoptions\fR] \fB\-C\fR uniqueID
+
+Get Number of packets going through the rule (for IGD:2 only):
+.br
+\fBupnpc\fR [\fIoptions\fR] \fB\-K\fR uniqueID
+
+Delete Pinhole (for IGD:2 only):
+.br
+\fBupnpc\fR [\fIoptions\fR] \fB\-D\fR uniqueID
+
+Get Firewall status (for IGD:2 only):
+.br
+\fBupnpc\fR [\fIoptions\fR] \fB\-S\fR
+
+Get Outbound Pinhole Timeout (for IGD:2 only):
+.br
+\fBupnpc\fR [\fIoptions\fR] \fB\-G\fR remote_ip remote_port internal_ip internal_port protocol
+
+Get Presentation url
+.br
+\fBupnpc\fR [\fIoptions\fR] \fB\-P\fR
+
+
+.SH DESCRIPTION
+.B upnpc
+is a sample program for
+.B miniupnpc
+library.
+
+
+.SH OPTIONS
+.TP
+.BI -e " description"
+set description for port mapping.
+
+.TP
+.B -6
+use ip v6 instead of ip v4.
+
+.TP
+.BI -u " url"
+bypass discovery process by providing the XML root description url.
+
+.TP
+.BI -m " address/interface"
+provide ip address (ip v4) or interface name (ip v4 or v6) to use for sending SSDP multicast packets.
+
+.TP
+.BI -z " localport"
+SSDP packets local (source) port (1024\-65535).
+
+.TP
+.BI -p " path"
+use this path for MiniSSDPd socket.
+
+.TP
+.BI -t " ttl"
+set multicast TTL. Default value is 2.
+
+
+.SH "SEE ALSO"
+external-ip(1)
+http://miniupnp.free.fr/

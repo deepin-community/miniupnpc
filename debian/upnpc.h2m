@@ -1,0 +1,9 @@
+[DESCRIPTION]
+.B upnpc
+is a sample program for
+.B miniupnpc
+library.
+
+[SEE ALSO]
+external-ip(1)
+http://miniupnp.free.fr/

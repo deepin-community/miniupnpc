@@ -1,0 +1,55 @@
+#!/usr/bin/make -f
+#export DH_VERBOSE = 1
+
+
+export DEB_BUILD_MAINT_OPTIONS = hardening=+all
+
+export DEB_CFLAGS_MAINT_APPEND  = -Wall -pedantic
+export DEB_LDFLAGS_MAINT_APPEND =
+
+export PYBUILD_SYSTEM=distutils
+
+
+%:
+	dh $@ --with python3 --buildsystem=makefile
+
+execute_after_dh_auto_configure:
+	make updateversion
+
+execute_after_dh_auto_clean:
+	rm -rf .pybuild *.egg-info miniupnpc.pc
+
+execute_after_dh_auto_build:
+	dh_auto_build --buildsystem=pybuild
+
+override_dh_auto_install:
+	dh_auto_install -- LIBDIR=lib/$(DEB_HOST_MULTIARCH)
+	dh_auto_install --buildsystem=pybuild
+
+
+############################################
+### Below is to manage upstream Git repo ###
+### and is not used during package build ###
+############################################
+DEBVERS       ?= $(shell dpkg-parsechangelog | sed -n -e 's/^Version: //p')
+VERSION       ?= $(shell echo '$(DEBVERS)' | sed -e 's/^[[:digit:]]*://' -e 's/[-].*//')
+DEBFLAVOR     ?= $(shell dpkg-parsechangelog | grep -E ^Distribution: | cut -d" " -f2)
+DEBPKGNAME    ?= $(shell dpkg-parsechangelog | grep -E ^Source: | cut -d" " -f2)
+GIT_TAG       ?= $(shell echo '$(VERSION)' | sed -e 's/~/_/')
+DEBIAN_BRANCH ?= $(shell cat debian/gbp.conf | grep debian-branch | cut -d'=' -f2 | awk '{print $1}')
+
+gen-orig-xz:
+	git tag -v $(GIT_TAG) || true
+	if [ ! -f ../$(DEBPKGNAME)_$(VERSION).orig.tar.xz ] ; then \
+		git archive --prefix=$(DEBPKGNAME)-$(VERSION)/ $(GIT_TAG) | xz >../$(DEBPKGNAME)_$(VERSION).orig.tar.xz ; \
+	fi
+	[ ! -e ../build-area ] && mkdir ../build-area || true
+	[ ! -e ../build-area/$(DEBPKGNAME)_$(VERSION).orig.tar.xz ] && cp ../$(DEBPKGNAME)_$(VERSION).orig.tar.xz ../build-area
+
+update-man:
+	help2man -o debian/man/upnpc-new.1 --include=debian/upnpc.h2m --version-string=2.0 --no-info --name "miniupnpc library test client." -s 1 -S miniupnpc --no-discard-stderr './upnpc-static'
+	sed -i 's|protocol is UDP or TCP||; s|Options:|\.SH OPTIONS|; s|\.PP||; s|\.IP|\.BR|g;  s|\.HP|\n\.TP|g; s|Usage : |\.SH SYNOPSIS\n\\\&|g; s|\\\&\./upnpc\\-static \[options\]|\\fBupnpc\\fR \[\\fIoptions\\fR\]|g; s|-STATIC||Ig;  s|\.SH|\n\n\.SH|g' debian/man/upnpc-new.1
+	sed -ri 's|\\fB\\-([^\\]+)\\fR ([^ ]+) : |\.BI -\1 " \2"\n|g; s|\\fB\\-([^\\]+)\\fR : |\.B -\1\n|g' debian/man/upnpc-new.1
+	sed -zi 's|\n\n\n\n|\n\n\n|g; s|\n\n\n\n|\n\n\n|g; s|\n\.BR\n\\fBupnpc|:\n\n\\fBupnpc|g' debian/man/upnpc-new.1
+	sed -rzi 's|\n([^\n]+)\n\.BR\n([^\n]+)|\n\2\n\.br\n\1|g' debian/man/upnpc-new.1
+	# Remember to check against the old man. Don't copy-paste.

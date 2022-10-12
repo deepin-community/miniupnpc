@@ -1,0 +1,13 @@
+diff --git a/setup.py b/setup.py
+index d54f924..0a6597a 100644
+--- a/setup.py
++++ b/setup.py
+@@ -13,7 +13,7 @@ from setuptools.command import build_ext
+ import subprocess
+ import os
+ 
+-EXT = ['build/libminiupnpc.a']
++EXT = ['build/libminiupnpc.so']
+ 
+ class make_then_build_ext(build_ext.build_ext):
+       def run(self):

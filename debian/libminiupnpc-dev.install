@@ -1,0 +1,5 @@
+usr/include/miniupnpc/
+usr/lib/*/libminiupnpc.a
+usr/lib/*/libminiupnpc.so
+usr/lib/*/pkgconfig/miniupnpc.pc
+usr/share/man/man3/miniupnpc.3*
